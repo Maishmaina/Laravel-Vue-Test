@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\StorageTypeController;
 use App\Http\Controllers\Admin\FacilityOwnerController;
 use App\Http\Controllers\Admin\StorageSubtypeController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Api\DestinationController;
 
 Route::prefix('admin')->group(function () {
     // AUTH ROUTES
@@ -37,22 +38,7 @@ Route::prefix('admin')->group(function () {
             return response()->json(Permission::get()->pluck('name'));
         });
 
-        // FACILITY OWNERS ROUTES
-        Route::apiResource('facility-owners', FacilityOwnerController::class);
-
-        // STORAGE TYPES ROUTES
-        Route::apiResource('storage-types', StorageTypeController::class);
-
-        // STORAGE SUBTYPES ROUTES
-        Route::apiResource('storage-subtypes', StorageSubtypeController::class);
-
-        // FACILITY ROUTES
-        Route::apiResource('facilities', FacilityController::class);
-
-        // UNITS ROUTES
-        Route::apiResource('units', UnitsController::class);
-
-        //UNIT SIZE
-        Route::apiResource('unit-size',UnitSizeController::class);
+     //OTHER APi ROUTES...
+     Route::apiResource('destinations',DestinationController::class);
     });
 });

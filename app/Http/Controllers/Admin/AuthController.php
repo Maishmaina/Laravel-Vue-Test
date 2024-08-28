@@ -35,7 +35,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Incorrect credentials'
             ], 422);
-        }
+        }   
 
         return response()->json([
             'admin' => new AdminResource($admin),

@@ -10,6 +10,7 @@ import Main from "@/components/Main.vue";
 import Home from "@/pages/Home.vue";
 import Users from "@/pages/Users.vue";
 import Admins from "@/pages/Admins.vue";
+import RolesAndPermissions from "@/pages/RolesAndPermissions.vue";
 
 
 // AUTH PAGE COMPONENTS
@@ -96,16 +97,7 @@ const router = createRouter({
                                 permission: "view roles",
                             },
                         },
-                        {
-                            path: "storage-types",
-                            name: "storage-types",
-                            component: StorageTypes,
-                            meta: {
-                                requiresAuth: true,
-                                title: "Storage Types",
-                                permission: "view storage types",
-                            },
-                        },
+                       
                     ],
                 },
             ],
@@ -177,17 +169,17 @@ const router = createRouter({
             ],
         },
         //authorized user/customer routes
-        {
-            path: "/",
-            component: UserMain,
-            children: [
-                {
-                    path: "/",
-                    name: "facility",
-                    component: Facility,
-                }
-            ]
-        }
+        // {
+        //     path: "/",
+        //     component: UserMain,
+        //     children: [
+        //         {
+        //             path: "/",
+        //             name: "facility",
+        //             component: Facility,
+        //         }
+        //     ]
+        // }
     ],
 });
 

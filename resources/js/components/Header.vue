@@ -34,14 +34,14 @@
                                     <NavLink title="Customers" :route="{name: 'users-list'}" v-if="permissions.includes('view customers')"/>
                                 </NavSubMenu>
 
-                                <NavSubMenu title="Facilities" icon-class="ki-outline ki-element-6 fs-2">
+                                <!-- <NavSubMenu title="Facilities" icon-class="ki-outline ki-element-6 fs-2">
                                     <NavLink title="Facility Owners" :route="{name: 'facility-owners'}" v-if="permissions.includes('view facility owners')" />
                                     <NavLink title="Facilities List" :route="{name: 'facilities-list'}" v-if="permissions.includes('view facilities')" />
-                                </NavSubMenu>
+                                </NavSubMenu> -->
 
                                 <NavSubMenu title="Globals" icon-class="ki-outline ki-setting-2 fs-2" >
                                     <NavLink title="Roles & Permissions" :route="{name: 'roles-and-permissions'}" v-if="permissions.includes('view roles')"/>
-                                    <NavLink title="Storage Types" :route="{name: 'storage-types'}" v-if="permissions.includes('view storage types')"/>
+                                   
                                 </NavSubMenu>
                             </div>
 
