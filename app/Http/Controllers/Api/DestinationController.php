@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Destination;
-use Illuminate\Support\Str;
 
 class DestinationController extends Controller
 {
@@ -31,19 +30,6 @@ class DestinationController extends Controller
 
         try {
 
-            $slug = Str::slug($validated['name']);
-
-            // Check if the slug already exists
-            $originalSlug = $slug;
-            $count = 1;
-            while (Destination::where('slug', $slug)->exists()) {
-                $slug = $originalSlug . '-' . $count;
-                $count++;
-            }
-    
-            // Add the unique
-            $validated['slug'] = $slug;
-
             $destination = Destination::create($validated);
 
         } catch (Exception $e) {
@@ -55,7 +41,7 @@ class DestinationController extends Controller
 
         return response()->json([
             'message' => 'Destination created successfully',
-            'facility' => $destination
+            'destination' => $destination
         ], 201);
 
     }
@@ -79,32 +65,19 @@ class DestinationController extends Controller
         ]);
 
         try {
-
-            $slug = Str::slug($validated['name']);
-
-            // Check if the slug already exists
-            $originalSlug = $slug;
-            $count = 1;
-            while (Destination::where('slug', $slug)->exists()) {
-                $slug = $originalSlug . '-' . $count;
-                $count++;
-            }
-    
-            // Add the unique
-            $validated['slug'] = $slug;
-
+            
             $destination->update($validated);
 
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed to create destination',
+                'message' => 'Failed to update destination',
                 'error' => $e->getMessage()
             ], 500);
         }
 
         return response()->json([
-            'message' => 'Destination created successfully',
-            'facility' => $destination->fresh()
+            'message' => 'Destination updated successfully',
+            'destination' => $destination->fresh()
         ]);
     }
 

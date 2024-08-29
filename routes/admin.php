@@ -13,6 +13,9 @@ use App\Http\Controllers\Admin\FacilityOwnerController;
 use App\Http\Controllers\Admin\StorageSubtypeController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Api\DestinationController;
+use App\Http\Controllers\Api\TourController;
+use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\TicketController;
 
 Route::prefix('admin')->group(function () {
     // AUTH ROUTES
@@ -40,5 +43,9 @@ Route::prefix('admin')->group(function () {
 
      //OTHER APi ROUTES...
      Route::apiResource('destinations',DestinationController::class);
+     Route::apiResource('tours',TourController::class);
+     Route::apiResource('bookings',BookingController::class);
+     Route::apiResource('tickets',TicketController::class);
+     
     });
 });
