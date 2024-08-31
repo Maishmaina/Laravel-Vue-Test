@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Booking;
+use App\Models\Ticket;
 use Illuminate\Support\Facades\Auth;
 
 class BookingController extends Controller
@@ -17,6 +18,14 @@ class BookingController extends Controller
         $booking=Booking::latest()->paginate();
         return response()->json($booking);
     }
+//fetch customer bookings with tours and destination
+     public function get_my_bookings(){
+        $user = auth()->user();
+        $bookings = Booking::with('tours.destinations')->where('user_id', $user->id)->latest()->paginate(10);
+        return response()->json($bookings);
+
+     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -24,14 +33,18 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-        
-            'tour_id'=>'required'
+            'tour_id'=>'required',
+            'amount'=>'required',
+            'slots'=>'required'
         ]);
 
         try {
             $validated['user_id'] = Auth::id();
             $validated['status']=0;
             $booking = Booking::create($validated);
+
+            Ticket::create(['booking_id'=>$booking->id]);
+            //create Email with details.
 
         } catch (Exception $e) {
             return response()->json([

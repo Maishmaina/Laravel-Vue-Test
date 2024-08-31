@@ -9,11 +9,11 @@ class Booking extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'tour_id', 'status'];
+    protected $fillable = ['user_id', 'tour_id', 'status','amount','slots'];
 
     public function tours()
     {
-        return $this->belongsTo(Tour::class);
+        return $this->belongsTo(Tour::class, 'tour_id');
     }
 
     public function tickets()

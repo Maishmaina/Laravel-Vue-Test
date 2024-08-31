@@ -11,6 +11,9 @@ import Home from "@/pages/Home.vue";
 import Users from "@/pages/Users.vue";
 import Admins from "@/pages/Admins.vue";
 import RolesAndPermissions from "@/pages/RolesAndPermissions.vue";
+import Destination from "@/pages/admin/Destinations.vue";
+import Tours from "@/pages/admin/Tours.vue";
+import Bookings from "@/pages/admin/Bookings.vue";
 
 
 // AUTH PAGE COMPONENTS
@@ -31,6 +34,7 @@ import UserSetPassword from "@/pages/user/ResetPassword.vue";
 
 import TourPage from "../pages/tours/TourPage.vue";
 import Tour_details from "../pages/tours/tour_details.vue";
+import My_bookings from "../pages/tours/my_bookings.vue";
 
 
 
@@ -88,6 +92,41 @@ const router = createRouter({
                     ],
                 },
                 {
+                    path: "/admin/tour-management",
+                    children: [
+                        {
+                            path: "destinations_list",
+                            name: "destination-list",
+                            component: Destination,
+                            meta: {
+                                requiresAuth: true,
+                                title: "Destination List",
+                                permission: "view customers",
+                            },
+                        },
+                        {
+                            path: "tours_list",
+                            name: "tours-list",
+                            component: Tours,
+                            meta: {
+                                requiresAuth: true,
+                                title: "Tours List",
+                                permission: "view operators",
+                            },
+                        },
+                        {
+                            path: "bookings_list",
+                            name: "bookings-list",
+                            component: Bookings,
+                            meta: {
+                                requiresAuth: true,
+                                title: "Booking List",
+                                permission: "view operators",
+                            },
+                        },
+                    ],
+                },
+                {
                     path: "/admin/globals",
                     children: [
                         {
@@ -106,7 +145,7 @@ const router = createRouter({
             ],
         },
         {
-            path: "/admin/auth",
+            path: "/admin/home",
             component: Auth,
             children: [
                 {
@@ -136,7 +175,7 @@ const router = createRouter({
         },
         {
             // user auth routes
-            path: "/auth",
+            path: "/user",
             component: UserAuth,
             children: [
                 {
@@ -185,7 +224,17 @@ const router = createRouter({
                     path: "/tours/:destination/:tour_id",
                     name: "tours_details",
                     component: Tour_details,  
-                }
+                },
+                {
+                    path: "/my_bookings",
+                    name: "my-booking-list",
+                    component: My_bookings,
+                    meta: {
+                        requiresUserAuth: true,
+                        title: "My Tour Bookings",
+                       
+                    },
+                },
             ]
         }
     ],
@@ -195,10 +244,14 @@ router.beforeEach((to, from) => {
 
     const { authUser, permissions } = useAuthStore();
     const { user } = useUserStore();
-    console.log(authUser);
     if (to.meta.requiresAuth && (!authUser)) {
         return {
             name: "login",
+        };
+    }
+    if (to.meta.requiresUserAuth && (!user)) {
+        return {
+            name: "tours",
         };
     }
     if (to.meta.permission && !permissions.includes(to.meta.permission)) {

@@ -4,7 +4,8 @@
             <div class="d-flex flex-center w-lg-50 pt-15 pt-lg-0 px-10">
                 <div class="d-flex flex-center flex-lg-start flex-column">
                     <div class="mb-7">
-                        <img alt="Logo" src="/assets/media/logos/custom-3.svg" />
+                        <!-- <img alt="Logo" src="/assets/media/logos/custom-3.svg" /> -->
+                        <h1 class="text-white fw-normal m-0">Tours Management System</h1>
                     </div>
                     <h2 class="text-white fw-normal m-0">Welcome Back Admin?</h2>
                 </div>

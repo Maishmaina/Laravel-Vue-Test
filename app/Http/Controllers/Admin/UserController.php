@@ -10,7 +10,7 @@ use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
-// use App\Jobs\SendAccountCreatedEmail;
+use App\Jobs\SendAccountCreatedEmail;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -52,7 +52,7 @@ class UserController extends Controller
                 'enabled' => $request->enabled
             ]);
 
-            // SendAccountCreatedEmail::dispatch($user, $password);
+            SendAccountCreatedEmail::dispatch($user, $password);
         } catch (Exception $e) {
             return $this->respondWithError('Failed to create user', $e);
         }

@@ -31,6 +31,21 @@ class PermissionSeeder extends Seeder
             'edit roles',
             'delete roles',
 
+            'view destinations',
+            'create destinations',
+            'edit destinations',
+            'delete destinations',
+
+            'view tours',
+            'create tours',
+            'edit tours',
+            'delete tours',
+
+            'view bookings',
+            'create bookings',
+            'edit bookings',
+            'delete bookings',
+
         ];
 
         foreach ($permissions as $permission) {

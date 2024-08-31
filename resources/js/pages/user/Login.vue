@@ -89,7 +89,6 @@ const submitForm = async () => {
   processing.value = false;
 
   if (response.status == 200) {
-    // router.push({name: 'home'})
     window.location.href = "/";
   } else {
     let error = response.data;

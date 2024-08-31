@@ -5,6 +5,7 @@ use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\TourController;
+use App\Http\Controllers\Api\BookingController;
 
 
 // AUTH ROUTES
@@ -22,8 +23,10 @@ Route::middleware('auth:user_api')->group(function () {
     Route::get('user', function () {
         return new UserResource(request()->user());
     });
-    //User Other Route
-    
+    //User Other Route protected routes
+    Route::post('save-customer-booking',[BookingController::class,'store']);
+    Route::get('customer-booking',[BookingController::class,'get_my_bookings']);
+   
 
     Route::post('logout', [AuthController::class, 'logout'])->name('user_logout');
 });

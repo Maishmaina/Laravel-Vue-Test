@@ -13,7 +13,7 @@ class TourController extends Controller
      */
     public function index()
     {
-        $tour=Tour::with('destinations')->latest()->paginate();
+        $tour=Tour::with('destinations')->withSum('bookings as total_slots', 'slots')->latest()->paginate();
         return response()->json($tour);
     }
 

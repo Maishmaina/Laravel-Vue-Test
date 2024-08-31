@@ -11,10 +11,10 @@ class DestinationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         
-         $destination=Destination::latest()->paginate();
+         $destination=Destination::search($request->search)->withCount('tours')->latest()->paginate(10);
          return response()->json($destination);
     }
 
@@ -84,7 +84,7 @@ class DestinationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Destination $id)
+    public function destroy(Destination $destination)
     {
         return $this->destroyModel($destination);
     }

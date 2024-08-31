@@ -35,7 +35,8 @@ export const useUserStore = defineStore(
             } catch (error) {
                 response = error.response;
             }
-            if (response.status == 200) {
+            console.log(response);
+            if (response?.status == 200) {
                 user.value = [];
             }
 
@@ -45,7 +46,7 @@ export const useUserStore = defineStore(
         const user_config = computed(() => {
             return {
                 headers: {
-                    Authorization: `Bearer ${user.value.token}`,
+                    Authorization: `Bearer ${user.value?.token}`,
                 },
             };
         });

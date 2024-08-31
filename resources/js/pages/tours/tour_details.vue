@@ -40,7 +40,7 @@
                           </div>
                           <div class="single-feature-titles">
                             <h3 class="title font-size-15 font-weight-medium">
-                              Group Size
+                              All Slots
                             </h3>
                             <span class="font-size-13">{{ tour.slots }} People</span>
                           </div>
@@ -190,11 +190,12 @@
         </div>
       </div>
 </template>
-<script setup lang="ts">
+<script setup >
  import { ref,onMounted,computed } from "vue";
  import {  useRoute,useRouter } from "vue-router";
  import { useUserStore } from "@/stores/userStore";
- const { user_config } = useUserStore();
+ import { toast } from "vue3-toastify";
+ const { user_config,user } = useUserStore();
 
  const route = useRoute();
  const router = useRouter();
@@ -206,11 +207,11 @@
     router.push({name: 'tours'});
  }
 
- let booking_slot:int=ref(0);
- let sum_amount_payable:float=ref(0);
+ let booking_slot=ref(0);
+ let sum_amount_payable=ref(0);
 
- const slotCounter=(type, available_slot:int,amount)=>{
-    console.log(type+available_slot);
+ const slotCounter=(type, available_slot,amount)=>{
+
     if(available_slot>=1){
         if(type=='add' && available_slot>booking_slot.value){
             booking_slot.value++;
@@ -229,7 +230,7 @@
  }
 
 
- const processing = ref(true);
+const processing = ref(true);
 
 const tour = ref({});
 
@@ -252,15 +253,43 @@ const fetchTour = async () => {
     toast.error("Error fetching Tour");
   }
 };
+
+
 const available_slot = computed(() => {
             return tour.value.slots-tour.value.total_slots;
         });
 
 
   const submitDetails=async()=>{
+    if(user==null){
+      router.push({name: 'login'})
+      return;
+    }
 
+    if(sum_amount_payable.value<=0){
+      toast.error('Make sure you have selected atleast one slot',{"theme":"colored"})
+      return;
+    }
+const form={ 'tour_id':tour_id,'amount':sum_amount_payable.value,'slots':booking_slot.value}
+    processing.value=true;
+  let response = null;
+  try {
+    response = await axios.post(`save-customer-booking`,form,user_config);
+  } catch (error){
+    response = error.response;
+  }
+  if (response.status == 200 || response.status ==201) {
+    toast.success("Successfully Booked, An email with Ticket details has sent to you",{"theme":"colored"});
+    sum_amount_payable.value=0
+    booking_slot.value=0
+    setTimeout(()=>{
+      route.push({name:'my-booking-list'})
+    },1000)
+  } else {
+    toast.error("Error while saving");
+  }
+  processing.value = false;
   } 
-
 
 onMounted(()=>{
     fetchTour()

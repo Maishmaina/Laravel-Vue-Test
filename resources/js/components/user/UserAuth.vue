@@ -22,11 +22,10 @@
               Fast, Efficient and Safe
             </h1>
             <div class="text-gray-600 fs-base text-center fw-semibold">
-              In this kind of System,
-              <a href="#" class="opacity-75-hover text-primary me-1">the customer</a
-              >search facility and store<br />and get some background information about
-              <a href="#" class="opacity-75-hover text-primary me-1">the Units</a>and
-              their <br />availability and request book if available.
+              Pleased to have you
+              <a href="#" class="opacity-75-hover text-primary me-1"> customer,</a
+              > search destination and tour<br />and get background information 
+              <a href="#" class="opacity-75-hover text-primary me-1"></a>
             </div>
           </div>
         </div>

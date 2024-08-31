@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Destination extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = ['name', 'slug', 'description'];
 
@@ -32,5 +33,10 @@ class Destination extends Model
         $count = static::where('slug', 'LIKE', "{$slug}%")->count();
         
         return $count ? "{$slug}-{$count}" : $slug;
+    }
+
+    public function scopeSearch($query, $name)
+    {
+        return $query->where('name', 'like', '%' . $name . '%');
     }
 }

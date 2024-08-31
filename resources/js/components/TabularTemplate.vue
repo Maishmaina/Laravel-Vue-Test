@@ -11,7 +11,7 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end">
-                    <template v-if="filterable">
+                    <template v-if="filterable=='true'">
                         <button type="button" class="btn btn-light-danger me-3" @click="$emit('clearFilters')" v-if="filter">
                             <i class="ki-outline ki-filter fs-2"></i>
                             Clear Filters
