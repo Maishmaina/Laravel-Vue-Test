@@ -13,9 +13,13 @@ class TourController extends Controller
      */
     public function index()
     {
-        $tour=Tour::latest()->paginate();
+        $tour=Tour::with('destinations')->latest()->paginate();
         return response()->json($tour);
     }
+
+    //get tour listing with destinations:
+
+  
 
     /**
      * Store a newly created resource in storage.
@@ -53,6 +57,7 @@ class TourController extends Controller
      */
     public function show(Tour $tour)
     {
+        $tour->load('destinations')->loadSum('bookings as total_slots', 'slots');
         return response()->json($tour);
     }
 

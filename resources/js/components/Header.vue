@@ -9,8 +9,9 @@
                         </div>
                     </div>
                     <router-link :to="{name: 'home'}" class="me-5 me-lg-9">
-                        <img alt="Logo" src="/assets/media/logos/demo53.svg" class="h-25px h-lg-30px theme-light-show" />
-                        <img alt="Logo" src="/assets/media/logos/demo53-dark.svg" class="h-25px h-lg-30px theme-dark-show" />
+                        <h1 class="text-dark">Epic Tours</h1>
+                        <!-- <img alt="Logo" src="/assets/media/logos/demo53.svg" class="h-25px h-lg-30px theme-light-show" />
+                        <img alt="Logo" src="/assets/media/logos/demo53-dark.svg" class="h-25px h-lg-30px theme-dark-show" /> -->
                     </router-link>
                 </div>
 
@@ -148,12 +149,13 @@
                                     <div class="symbol symbol-50px me-5">
                                         <img alt="Logo" src="/assets/media/avatars/default-user.png" />
                                     </div>
-
+                                   
                                     <div class="d-flex flex-column">
                                         <div class="fw-bold d-flex align-items-center fs-5">
                                             {{ authUser? authUser.full_name : '' }}
+                                            {{ user? user.user.full_name : '' }}
                                         </div>
-                                        <p class="fw-semibold text-muted fs-7">{{ authUser ? authUser.email:'' }}</p>
+                                        <p class="fw-semibold text-muted fs-7">{{ authUser ? authUser.email:'' }} {{ user? user.user.email : '' }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -226,8 +228,9 @@ import { useUserStore } from "@/stores/userStore";
 const router = useRouter()
 const { authUser, permissions, logout } = useAuthStore()
 
-const { userLogout } = useUserStore();
+const { user,userLogout } = useUserStore();
 
+console.log(user);
 const signOut = async () => {
 
     if (permissions.length) {

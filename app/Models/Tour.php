@@ -13,7 +13,7 @@ class Tour extends Model
 
     public function destinations()
     {
-        return $this->belongsTo(Destination::class);
+        return $this->belongsTo(Destination::class,'destination_id');
     }
 
     public function bookings()

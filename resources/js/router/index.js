@@ -29,6 +29,9 @@ import UserForgotPassword from "@/pages/user/ForgotPassword.vue";
 import VerifyUserAccount from "@/pages/user/VerifyUserAccount.vue"
 import UserSetPassword from "@/pages/user/ResetPassword.vue";
 
+import TourPage from "../pages/tours/TourPage.vue";
+import Tour_details from "../pages/tours/tour_details.vue";
+
 
 
 const checkGuest = (to, from) => {
@@ -168,18 +171,23 @@ const router = createRouter({
                 }
             ],
         },
-        //authorized user/customer routes
-        // {
-        //     path: "/",
-        //     component: UserMain,
-        //     children: [
-        //         {
-        //             path: "/",
-        //             name: "facility",
-        //             component: Facility,
-        //         }
-        //     ]
-        // }
+        //un-authorized user/customer routes
+        {
+            path: "/",
+            component: UserMain,
+            children: [
+                {
+                    path: "/",
+                    name: "tours",
+                    component: TourPage,
+                },
+                {
+                    path: "/tours/:destination/:tour_id",
+                    name: "tours_details",
+                    component: Tour_details,  
+                }
+            ]
+        }
     ],
 });
 
