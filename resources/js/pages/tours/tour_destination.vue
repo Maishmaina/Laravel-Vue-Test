@@ -44,6 +44,7 @@ const fetchTours = async (page = 1) => {
   } else {
     toast.error("Error fetching Tours list");
   }
+
 };
 
 onMounted(()=>{

@@ -140,7 +140,7 @@ const print_data=ref({
 
 })
 const showTicketModal=(data)=>{
-    console.log(data);
+    
     $('#print-modal').modal('show')
     print_data.value.tour_name=data.tours.name
     print_data.value.tour_place=data.tours.destinations.name
@@ -194,3 +194,36 @@ onMounted(()=>{
     fetchMyBookings()
 })
 </script>
+<style scoped>
+
+.ticket-container {
+            border: 2px solid #007bff;
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 500px;
+            margin: 20px auto;
+            background-color: #f8f9fa;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        }
+        .ticket-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .ticket-header h3 {
+            margin: 0;
+            color: #007bff;
+        }
+        .ticket-details {
+            margin-bottom: 20px;
+        }
+        .ticket-details p {
+            margin: 5px 0;
+        }
+        .barcode {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .modal-footer {
+            justify-content: center;
+        }
+</style>

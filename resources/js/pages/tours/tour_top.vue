@@ -12,9 +12,9 @@
                   </div>
                 </div>
                 <!-- end hero-content -->
-                <div class="search-fields-container">
+                <div class="search-fields-container" style="display: none;">
                   <div class="contact-form-action">
-                    <form action="#" class="row">
+                    <form action="#" class="row" >
                       <div class="col-lg-6 pe-0">
                         <div class="input-box">
                           <label class="label-text">Destination</label>

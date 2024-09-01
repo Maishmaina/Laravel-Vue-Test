@@ -16,7 +16,7 @@
                     <span class="rating__text">{{ tour.destinations.name }}</span>
                   </div>
                   <div class="card-price d-flex align-items-center justify-content-between">
-                    <span><i class="la la-clock me-1"></i>6 Days</span>
+                    <span><i class="la la-clock me-1"></i>{{returnTourDates(tour.start_date,tour.end_date)  }} Days</span>
                     <p>
                       <span class="price__from">from</span>
                       <span class="price__num"> KES {{ tour.price }}</span>
@@ -27,7 +27,16 @@
             </div>
 </template>
 <script setup>
+ import moment from 'moment'
 
+
+ const returnTourDates=(start,end)=>{
+  const date1 = moment(start);
+const date2 = moment(end);
+
+const diffInDays = date2.startOf('day').diff(date1.startOf('day'), 'days');
+return diffInDays;
+ }
 const props = defineProps({
     tour: Object,
 });

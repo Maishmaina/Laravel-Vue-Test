@@ -8,7 +8,7 @@
                 <div id="description" class="page-scroll">
                   <div class="single-content-item pb-4">
                     <h3 class="title font-size-26">
-                      3 Days Tour: {{ tour.name }}
+                      {{ returnTourDates(tour.start_date,tour.end_date) }} Days Tour: {{ tour.name }}
                     </h3>
                     <div class="d-flex flex-wrap align-items-center pt-2">
                       <p class="me-2">{{ tour.destinations?.name }}</p>
@@ -27,7 +27,7 @@
                             <h3 class="title font-size-15 font-weight-medium">
                               Duration
                             </h3>
-                            <span class="font-size-13">3 Days</span>
+                            <span class="font-size-13">{{ returnTourDates(tour.start_date,tour.end_date) }} Days</span>
                           </div>
                         </div>
                         <!-- end single-tour-feature -->
@@ -72,7 +72,7 @@
                             <h3 class="title font-size-15 font-weight-medium">
                               Date
                             </h3>
-                            <span class="font-size-13">Jan 19' - Dec 21'</span>
+                            <span class="font-size-13">{{ moment(tour.start_date).format('MMMM Do YYYY')  }} </span>
                           </div>
                         </div>
                         <!-- end single-tour-feature -->
@@ -88,7 +88,7 @@
                             <h3 class="title font-size-15 font-weight-medium">
                               Pickup From
                             </h3>
-                            <span class="font-size-13">Airport</span>
+                            <span class="font-size-13">{{ tour.pickup_place }}</span>
                           </div>
                         </div>
                       </div>
@@ -195,6 +195,7 @@
  import {  useRoute,useRouter } from "vue-router";
  import { useUserStore } from "@/stores/userStore";
  import { toast } from "vue3-toastify";
+ import moment from 'moment'
  const { user_config,user } = useUserStore();
 
  const route = useRoute();
@@ -206,6 +207,17 @@
  if(destination==null || tour_id==null){
     router.push({name: 'tours'});
  }
+
+ 
+
+
+const returnTourDates=(start,end)=>{
+ const date1 = moment(start);
+const date2 = moment(end);
+
+const diffInDays = date2.startOf('day').diff(date1.startOf('day'), 'days');
+return diffInDays;
+}
 
  let booking_slot=ref(0);
  let sum_amount_payable=ref(0);
@@ -247,7 +259,7 @@ const fetchTour = async () => {
     
   if (response.status == 200) {
     tour.value = response.data;
-
+console.log(tour.value)
     processing.value = false;
   } else {
     toast.error("Error fetching Tour");
@@ -279,12 +291,10 @@ const form={ 'tour_id':tour_id,'amount':sum_amount_payable.value,'slots':booking
     response = error.response;
   }
   if (response.status == 200 || response.status ==201) {
-    toast.success("Successfully Booked, An email with Ticket details has sent to you",{"theme":"colored"});
+    toast.success("Successfully Booked, A Ticket has been generated.",{"theme":"colored"});
     sum_amount_payable.value=0
     booking_slot.value=0
-    setTimeout(()=>{
-      route.push({name:'my-booking-list'})
-    },1000)
+      router.push({name:'my-booking-list'})
   } else {
     toast.error("Error while saving");
   }
