@@ -13,17 +13,17 @@ class BookingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $booking=Booking::latest()->paginate();
+        $booking=Booking::search($request->search)->with(['tours.destinations','users','tickets'])->latest()->paginate(5);
         return response()->json($booking);
     }
+
 //fetch customer bookings with tours and destination
      public function get_my_bookings(){
         $user = auth()->user();
-        $bookings = Booking::with('tours.destinations')->where('user_id', $user->id)->latest()->paginate(10);
+        $bookings = Booking::with(['tours.destinations','users','tickets'])->where('user_id', $user->id)->latest()->paginate(10);
         return response()->json($bookings);
-
      }
 
 
@@ -75,6 +75,7 @@ class BookingController extends Controller
         $validated = $request->validate([
         
             'tour_id'=>'required',
+            'amount'=>'required',
             'status'=>'required',
         ]);
 

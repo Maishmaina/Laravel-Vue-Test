@@ -1,21 +1,18 @@
 <?php
 
-use App\Http\Controllers\Admin\UnitsController;
-use App\Http\Controllers\Admin\UnitSizeController;
+
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
-use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\StorageTypeController;
-use App\Http\Controllers\Admin\FacilityOwnerController;
-use App\Http\Controllers\Admin\StorageSubtypeController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Api\DestinationController;
 use App\Http\Controllers\Api\TourController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\TicketController;
+use App\Http\Controllers\Admin\ReportController;
+
 
 Route::prefix('admin')->group(function () {
     // AUTH ROUTES
@@ -35,6 +32,11 @@ Route::prefix('admin')->group(function () {
         // ROLE ROUTES
         Route::apiResource('roles', RoleController::class);
         Route::post('sync-permissions', [RoleController::class, 'syncPermissions']);
+
+        //REPORT ROUTES
+        Route::get('top-totals-report', [ReportController::class,'returnTopCountService']);
+        Route::get('totals-earning-report', [ReportController::class,'returnTotalEarnings']);
+        Route::get('totals-earning-collection', [ReportController::class,'returnBookingAmountBooing']);
 
         // PERMISSIONS
         Route::get('permissions', function () {

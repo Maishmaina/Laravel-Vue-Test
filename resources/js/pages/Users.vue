@@ -4,7 +4,7 @@
         :fetched-data="users"
         :processing="processing"
         :filter="filter"
-        add-permission="create customers"
+        add-permission="create customerss"
         @add-clicked="showAddModal"
         @searching="searching"
         @clear-filters="clearFilters"

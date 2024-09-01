@@ -1,44 +1,51 @@
 <template>
     <TabularTemplate
-        resource="Customer"
-        :fetched-data="users"
+        resource="Bookings"
+        :fetched-data="bookings"
         :processing="processing"
         :filter="filter"
-        add-permission="create customers"
+        add-permission="create booking"
         @add-clicked="showAddModal"
         @searching="searching"
         @clear-filters="clearFilters"
         @filter-clicked="showFilterModal"
     >
         <template #thead>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Phone No.</th>
-            <th>Email</th>
-            <th>Date Joined</th>
+            <th>Tour </th>
+            <th>Destination</th>
+            <th>Booked by</th>
+            <th>Slot booked</th>
+            <th>Amount Paid(KES)</th>
             <th>Status</th>
-            <th class="text-end" v-if="permissions.includes('view customer details') || permissions.includes('delete customers')">Actions</th>
+            <th>Tour day</th>
+            <th>Booked on</th>
+            <th class="text-end" v-if="permissions.includes('edit bookings') || permissions.includes('delete bookings')">Actions</th>
         </template>
 
         <template #tbody>
-            <template v-if="users.data.length">
-                <tr v-for="user in users.data">
-                    <td>{{ user.first_name }}</td>
-                    <td>{{ user.last_name }}</td>
-                    <td>{{ user.phone_number }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ moment(user.created_at).format('MMMM Do YYYY') }}</td>
+            <template v-if="bookings.data.length">
+                <tr v-for="booking in bookings.data">
+                    <td>{{ booking.tours.name }}</td>
+                    <td>{{ booking.tours.destinations.name }}</td>
+                    <td>{{ booking.users.full_name }}</td>
+                    <td>{{ booking.slots }}</td>
+                    <td>{{ booking.amount }}</td>
                     <td>
-                        <span class="badge badge-light-success" v-if="user.enabled">Enabled</span>
-                        <span class="badge badge-light-danger" v-else>Disabled</span>
+                        <span class="badge text-white py-1 px-2" :class="booking.status==0?'text-bg-primary' : booking.status==1?'text-bg-success':'text-bg-danger'" >{{ booking.status==0?'Pending':booking.status==1?'Approved':'Canceled' }}</span>
                     </td>
-                    <td class="text-end" v-if="permissions.includes('view customer details') || permissions.includes('delete customers')">
-                        <a href="#" type="button" class="btn btn-sm btn-icon btn-primary" v-if="permissions.includes('view customer details')">
+                    <td>{{ moment(booking.tours.start_date).format('MMMM Do YYYY') }}</td>
+                    <td>{{ moment(booking.created_at).format('MMMM Do YYYY') }}</td>
+                    <td class="text-end" v-if="permissions.includes('delete bookings')">
+                        <div class="btn-group" > 
+                        <button  type="button" title="view ticket" class="btn btn-sm btn-icon btn-success" @click.prevent="showTicketModal(booking)" >
                             <i class="fa-solid fa-eye"></i>
-                        </a>
-                        <button type="button" class="ms-2 btn btn-sm btn-icon btn-danger" @click="deleteUser(user.id)" v-if="permissions.includes('delete customers')">
-                            <i class="fa-solid fa-trash"></i>
                         </button>
+                        <button  type="button" title="edit status" class="btn btn-sm btn-icon btn-primary" @click.prevent="edit_booking(booking)" >
+                            <i class="fa-solid fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-icon btn-danger" @click="deleteBooking(booking.id)" v-if="permissions.includes('delete bookings')">
+                            <i class="fa-solid fa-trash"></i>
+                        </button></div> 
                     </td>
                 </tr>
             </template>
@@ -48,74 +55,23 @@
         </template>
 
         <template #pagination>
-            <Pagination :data="users" @pagination-change-page="fetchUsers" :limit="5" />
+            <Pagination :data="bookings" @pagination-change-page="fetchBookings" :limit="5" />
         </template>
     </TabularTemplate>
 
-    <Modal id="add-modal" title="Add Customer">
+    <Modal id="add-modal" title="Update Booking">
         <template #modal-body>
             <div class="form-group">
-                <label for="first-name" class="required form-label">First Name</label>
-                <input type="text"
-                    class="form-control form-control-solid"
-                    :class="{'is-invalid': errors.first_name}"
-                    id="first-name"
-                    placeholder="Enter first name"
-                    v-model="form.first_name"
-                    :readonly="processing"
-                />
-                <div class="invalid-feedback" v-if="errors.first_name">
-                    <small>{{ errors.first_name[0] }}</small>
-                </div>
+                <label for="role" class="required form-label">Update Booking Status</label>
+                <select class="form-select form-select-solid" id="role" v-model="form.status" :readonly="processing">
+                    <option value="">Select status...</option>
+                    <option value="0">Pending</option>
+                    <option value="1">Approved</option>
+                    <option value="2">Canceled</option>
+                   
+                </select>
             </div>
-            <div class="form-group">
-                <label for="last-name" class="required form-label">Last Name</label>
-                <input type="text"
-                    class="form-control form-control-solid"
-                    :class="{'is-invalid': errors.last_name}"
-                    id="last-name"
-                    placeholder="Enter last name"
-                    v-model="form.last_name"
-                    :readonly="processing"
-                />
-                <div class="invalid-feedback" v-if="errors.last_name">
-                    <small>{{ errors.last_name[0] }}</small>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="phone-number" class="form-label">Phone No.</label>
-                <input type="text"
-                    class="form-control form-control-solid"
-                    :class="{'is-invalid': errors.phone_number}"
-                    id="phone-number"
-                    placeholder="Enter phone number"
-                    v-model="form.phone_number"
-                    :readonly="processing"
-                />
-                <div class="invalid-feedback" v-if="errors.phone_number">
-                    <small>{{ errors.phone_number[0] }}</small>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="email" class="required form-label">Email</label>
-                <input type="email"
-                    class="form-control form-control-solid"
-                    :class="{'is-invalid': errors.email}"
-                    id="email"
-                    placeholder="Enter email"
-                    v-model="form.email"
-                    :readonly="processing"
-                />
-                <div class="invalid-feedback" v-if="errors.email">
-                    <small>{{ errors.email[0] }}</small>
-                </div>
-            </div>
-            <div class="mt-6 form-check form-switch form-check-custom form-check-solid">
-                <input class="form-check-input h-25px w-40px" type="checkbox" id="enabled" v-model="form.enabled" :readonly="processing"/>
-                <label class="form-check-label" for="enabled">
-                    Enabled
-                </label>
-            </div>
+          
         </template>
 
         <template #modal-footer>
@@ -129,73 +85,39 @@
             </button>
         </template>
     </Modal>
-
-    <Modal id="filter-modal" title="Filter Customers">
+    <Modal id="print-modal" title="View Ticket">
         <template #modal-body>
-            <div class="form-group">
-                <label for="filter-first-name" class="form-label">First Name</label>
-                <input type="text"
-                    class="form-control form-control-solid"
-                    id="filter-first-name"
-                    v-model="filters.first_name"
-                    :readonly="processing"
-                />
-            </div>
-            <div class="form-group">
-                <label for="filter-last-name" class="form-label">Last Name</label>
-                <input type="text"
-                    class="form-control form-control-solid"
-                    id="filter-last-name"
-                    v-model="filters.last_name"
-                    :readonly="processing"
-                />
-            </div>
-            <div class="form-group">
-                <label for="filter-phone-number" class="form-label">Phone No.</label>
-                <input type="text"
-                    class="form-control form-control-solid"
-                    id="filter-phone-number"
-                    v-model="filters.phone_number"
-                    :readonly="processing"
-                />
-            </div>
-            <div class="form-group">
-                <label for="filter-email" class="form-label">Email</label>
-                <input type="email"
-                    class="form-control form-control-solid"
-                    id="filter-email"
-                    v-model="filters.email"
-                    :readonly="processing"
-                />
-            </div>
-            <div class="form-group">
-                <label for="filter-status" class="form-label">Status</label>
-                <select class="form-select form-select-solid" id="filter-status" v-model="filters.status" :readonly="processing">
-                    <option value="">Select status...</option>
-                    <option value="enabled">Enabled</option>
-                    <option value="disabled">Disabled</option>
-                </select>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="filter-from-date" class="form-label">From Date</label>
-                    <input type="date" id="filter-from-date" class="form-control form-control-solid" v-model="filters.from_date" :readonly="processing">
+             <!-- Modal Body -->
+             <div class="modal-body" id="ticketContent">
+                    <div class="ticket-container">
+                        <div class="ticket-header">
+                            <h3>All-Star Tours</h3>
+                            <p><strong>Title:</strong> {{print_data.tour_name }}</p>
+                            <p><strong>Date:</strong> {{ moment(print_data.tour_start).format('MMMM Do YYYY') }}</p>
+                            <p><strong>Time:</strong> {{ moment(print_data.tour_start).format('hh:mm:ss A') }}</p>
+                        </div>
+
+                        <div class="ticket-details">
+                            <p><strong>Name:</strong> {{ print_data.tour_user_name }}</p>
+                            <p><strong>Slot Booked:</strong> {{ print_data.tour_slot }}</p>
+                            <p><strong>Tour To:</strong> {{ print_data.tour_place }}</p>
+                            <p><strong>Meeting Point:</strong> {{ print_data.tour_meeting_point }}</p>
+                            <p><strong>Ticket Number:</strong> {{ print_data.tour_ticket }}</p>
+                        </div>
+                        <div class="barcode">
+                            <img :src="'https://barcode.tec-it.com/barcode.ashx?data='+print_data.tour_ticket + '&code=Code128&dpi=96'" alt="Barcode">
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label for="filter-to-date" class="form-label">To Date</label>
-                    <input type="date" id="filter-to-date" class="form-control form-control-solid" v-model="filters.to_date" :readonly="processing">
-                </div>
-            </div>
+          
         </template>
 
         <template #modal-footer>
-            <button type="button" class="btn btn-primary" @click="filterUsers">
-                <span class="indicator-label" v-if="!processing">
-                    Apply Filters
+            <button type="button" class="btn btn-primary" @click="print_ticket">
+                <span class="indicator-label">
+                    Print Ticket
                 </span>
-                <span class="indicator-progress d-block" v-else>
-                    Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                </span>
+              
             </button>
         </template>
     </Modal>
@@ -223,7 +145,7 @@ const config = {
 
 const processing = ref(true)
 
-const users = ref({})
+const bookings = ref({})
 
 const search = ref('')
 
@@ -231,32 +153,16 @@ const searching = (value) => {
     search.value = value
 }
 
-const filters = ref({
-    first_name: '',
-    last_name: '',
-    phone_number: '',
-    email: '',
-    status: '',
-    from_date: '',
-    to_date: ''
-})
 
-const fetchUsers = async (page = 1) => {
+const fetchBookings = async (page = 1) => {
     let response = null
     try {
-        response = await axios.get(`admin/users`, {
+        response = await axios.get(`admin/bookings`, {
             ...config,
 
             params: {
                 page,
-                search: search.value,
-                first_name: filters.value.first_name,
-                last_name: filters.value.last_name,
-                phone_number: filters.value.phone_number,
-                email: filters.value.email,
-                status: filters.value.status,
-                from_date: filters.value.from_date,
-                to_date: filters.value.to_date,
+                search: search.value
             }
         })
     } catch (error) {
@@ -264,59 +170,106 @@ const fetchUsers = async (page = 1) => {
     }
 
     if (response.status == 200) {
-        users.value = response.data
+        bookings.value = response.data
         processing.value = false
     } else {
-        toast.error("Error fetching customers list")
+        toast.error("Error fetching list")
     }
 
 }
 
 onMounted(() => {
-    fetchUsers()
+    fetchBookings()
 })
 
 
 const showAddModal = () => {
     $('#add-modal').modal('show')
+    clearForm()
+}
+
+const print_data=ref({
+    tour_name:'',
+    tour_place:'',
+    tour_meeting_point:'',
+    tour_slot:'',
+    tour_user_name:'',
+    tour_start:'',
+    tour_ticket:'12345',
+
+})
+const showTicketModal=(data)=>{
+    console.log(data);
+    $('#print-modal').modal('show')
+    print_data.value.tour_name=data.tours.name
+    print_data.value.tour_place=data.tours.destinations.name
+    print_data.value.tour_meeting_point=data.tours.pickup_place
+    print_data.value.tour_slot=data.slots
+    print_data.value.tour_user_name=data.users.full_name
+    print_data.value.tour_start=data.tours.start_date
+    print_data.value.tour_ticket=data.tickets[0].ticket_no !==''?data.tickets[0].ticket_no:12345;
+
+}
+
+const print_ticket=()=>{
+
+    let printContents = document.getElementById('ticketContent').innerHTML;
+    let originalContents = document.body.innerHTML;
+    
+    document.body.innerHTML = printContents;
+    
+    window.print();
+    
+    document.body.innerHTML = originalContents;
+    window.location.reload();
+}
+
+
+const edit_booking=(data)=>{
+    showAddModal()
+    form.value.id=data.id;
+    form.value.tour_id=data.tour_id;
+    form.value.amount=data.amount
+    form.value.status=data.status
 }
 
 const errors = ref({})
 
 const form = ref({
-    first_name: '',
-    last_name: '',
-    phone_number: '',
-    email: '',
-    enabled: true,
+    id:'',
+    tour_id: '',
+    amount: '',
+    status: '',
 })
 
 const clearForm = () => {
-    form.value.first_name = ''
-    form.value.last_name = ''
-    form.value.phone_number = ''
-    form.value.email = ''
-    form.value.enabled = true
+    form.value.id = ''
+    form.value.tour_id = ''
+    form.value.amount = ''
+    form.value.status=''
 }
 
 const submitForm = async () => {
     errors.value = {}
     processing.value = true
-
+    
     let response = null
+  
     try {
-        response = await axios.post('admin/users', form.value, config)
+        
+        response = await axios.put(`admin/bookings/${form.value.id}`, form.value, config)
+        
     } catch (error) {
         response = error.response
     }
 
-    if (response.status == 201) {
-        toast.success("Customer added successfully")
+    if (response.status == 201 || response.status == 200) {
+        toast.success("Booking status updated successfully")
         clearForm()
         $('#add-modal .btn-sm').click()
-        fetchUsers()
+        fetchBookings()
     } else if (response.status == 422) {
-        toast.error("Error adding customer")
+        toast.error("Error adding")
         errors.value = response.data.errors
 
         processing.value = false
@@ -329,43 +282,12 @@ const showFilterModal = () => {
     $('#filter-modal').modal('show')
 }
 
-const filterUsers = async () => {
-    $('#filter-modal .btn-sm').click()
-
-    processing.value = true
-
-    await fetchUsers()
-
-    filter.value = true
-}
-
-watch(() => filters.value.from_date, () => {
-    if (!filters.value.to_date) {
-        filters.value.to_date = moment().format('YYYY-MM-D')
-    }
-})
-
-const clearFilters = async () => {
-    processing.value = true
-
-    filters.value.first_name = ''
-    filters.value.last_name = ''
-    filters.value.phone_number = ''
-    filters.value.email = ''
-    filters.value.status = ''
-    filters.value.from_date = ''
-    filters.value.to_date = ''
-
-    await fetchUsers()
-
-    filter.value = false
-}
 
 watch(() => search.value, throttle(() => {
-    fetchUsers()
+    fetchBookings()
 }, 600))
 
-const deleteUser = (id) => {
+const deleteBooking = (id) => {
     Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -378,21 +300,21 @@ const deleteUser = (id) => {
         if (result.isConfirmed) {
             let response = null
             try {
-                response = await axios.delete(`admin/users/${id}`, config)
+                response = await axios.delete(`admin/bookings/${id}`, config)
             } catch (error) {
                 response = error.response
-                toast.error("Error deleting customer")
+                toast.error("Deleting User Bookings is prohibited, Contact Admin")
             }
 
             if (response.status == 200) {
                 Swal.fire(
                     'Deleted!',
-                    'Customer has been deleted.',
+                    'Bookings has been deleted.',
                     'success'
                 )
                 processing.value = true
 
-                fetchUsers()
+                fetchBookings()
             }
         }
     })
@@ -400,4 +322,35 @@ const deleteUser = (id) => {
 
 </script>
 
-<style scoped></style>
+<style scoped>
+    .ticket-container {
+            border: 2px solid #007bff;
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 500px;
+            margin: 20px auto;
+            background-color: #f8f9fa;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        }
+        .ticket-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .ticket-header h3 {
+            margin: 0;
+            color: #007bff;
+        }
+        .ticket-details {
+            margin-bottom: 20px;
+        }
+        .ticket-details p {
+            margin: 5px 0;
+        }
+        .barcode {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .modal-footer {
+            justify-content: center;
+        }
+</style>

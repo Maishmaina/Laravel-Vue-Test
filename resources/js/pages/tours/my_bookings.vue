@@ -48,11 +48,12 @@
                             </td>
                             <td>
                               <div class="group-button">
-                                <button class="btn btn-primary btn-sm">
-                                  Ticket
-                                </button> &nbsp;<button class="btn btn-danger btn-sm">
+                                <button class="btn btn-primary btn-sm" @click.prevent="showTicketModal(book)" >
+                                  View Ticket
+                                </button> 
+                                <!-- &nbsp;<button class="btn btn-danger btn-sm">
                                   Cancel
-                                </button>
+                                </button> -->
                               </div>
                             </td>
                           </tr>
@@ -63,15 +64,58 @@
                 </div>
               </div>
             </div>
-          
           </div>
+
+        <div class="modal fade" id="print-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">View Ticket</h3>
+                    <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                    </div>
+                </div>
+
+                <div class="modal-body" id="ticketContent">
+                  <div class="ticket-container">
+                        <div class="ticket-header">
+                            <h3>All-Star Tours</h3>
+                            <p><strong>Title:</strong> {{print_data.tour_name }}</p>
+                            <p><strong>Date:</strong> {{ moment(print_data.tour_start).format('MMMM Do YYYY') }}</p>
+                            <p><strong>Time:</strong> {{ moment(print_data.tour_start).format('hh:mm:ss A') }}</p>
+                        </div>
+
+                        <div class="ticket-details">
+                            <p><strong>Name:</strong> {{ print_data.tour_user_name }}</p>
+                            <p><strong>Slot Booked:</strong> {{ print_data.tour_slot }}</p>
+                            <p><strong>Tour To:</strong> {{ print_data.tour_place }}</p>
+                            <p><strong>Meeting Point:</strong> {{ print_data.tour_meeting_point }}</p>
+                            <p><strong>Ticket Number:</strong> {{ print_data.tour_ticket }}</p>
+                        </div>
+                        <div class="barcode">
+                            <img :src="'https://barcode.tec-it.com/barcode.ashx?data='+print_data.tour_ticket + '&code=Code128&dpi=96'" alt="Barcode">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" @click="print_ticket">
+                <span class="indicator-label">
+                    Print Ticket
+                </span>
+              
+            </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 <script setup>
 
 import { ref,onMounted,computed } from "vue";
  import {  useRoute,useRouter } from "vue-router";
  import { useUserStore } from "@/stores/userStore";
- import { toast } from "vue3-toastify";
+ import moment from 'moment'
  const { user_config,user } = useUserStore();
 
  const route = useRoute();
@@ -84,6 +128,43 @@ import { ref,onMounted,computed } from "vue";
  const processing = ref(true);
 
 const bookings = ref([]);
+
+const print_data=ref({
+    tour_name:'',
+    tour_place:'',
+    tour_meeting_point:'',
+    tour_slot:'',
+    tour_user_name:'',
+    tour_start:'',
+    tour_ticket:'12345',
+
+})
+const showTicketModal=(data)=>{
+    console.log(data);
+    $('#print-modal').modal('show')
+    print_data.value.tour_name=data.tours.name
+    print_data.value.tour_place=data.tours.destinations.name
+    print_data.value.tour_meeting_point=data.tours.pickup_place
+    print_data.value.tour_slot=data.slots
+    print_data.value.tour_user_name=data.users.full_name
+    print_data.value.tour_start=data.tours.start_date
+    print_data.value.tour_ticket=data.tickets[0].ticket_no !==''?data.tickets[0].ticket_no:12345;
+
+}
+
+const print_ticket=()=>{
+
+    let printContents = document.getElementById('ticketContent').innerHTML;
+    let originalContents = document.body.innerHTML;
+    
+    document.body.innerHTML = printContents;
+    
+    window.print();
+    
+    document.body.innerHTML = originalContents;
+    window.location.reload();
+}
+
 
 
 

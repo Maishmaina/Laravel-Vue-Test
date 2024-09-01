@@ -11,9 +11,9 @@ class TourController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tour=Tour::with('destinations')->withSum('bookings as total_slots', 'slots')->latest()->paginate();
+        $tour=Tour::search($request->search)->with('destinations')->withSum('bookings as total_slots', 'slots')->latest()->paginate();
         return response()->json($tour);
     }
 
@@ -33,6 +33,9 @@ class TourController extends Controller
              'description'=>'required',
              'price'=>'required',
              'slots'=>'required',
+             'pickup_place'=>'required',
+             'start_date'=>'required',
+             'end_date'=>'required',
         ]);
 
         try {
@@ -73,6 +76,9 @@ class TourController extends Controller
              'description'=>'required',
              'price'=>'required',
              'slots'=>'required',
+             'pickup_place'=>'required',
+             'start_date'=>'required',
+             'end_date'=>'required',
         ]);
 
         try {

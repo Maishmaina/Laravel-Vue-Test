@@ -63,7 +63,7 @@ const router = createRouter({
                     component: Home,
                     meta: {
                         requiresAuth: true,
-                        title: "Dashboard",
+                        title: "",
                     },
                 },
                 {
